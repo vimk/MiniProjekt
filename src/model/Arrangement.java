@@ -1,27 +1,39 @@
-
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package model;
 
+/**
+ *
+ * @author Joseph
+ */
 public class Arrangement {
+
     private int id;
     private String name;
     private String startDate;
     private String startTime;
+    private String weekDay;
     private String endDate;
     private String endTime;
 
-    public Arrangement(int id, String name, String startDate, String startTime, String endDate, String endTime) {
+    public Arrangement(int id, String name, String startDate, String startTime, String weekDay, String endDate, String endTime) {
         this.id = id;
         this.name = name;
         this.startDate = startDate;
         this.startTime = startTime;
+        this.weekDay = weekDay;
         this.endDate = endDate;
         this.endTime = endTime;
     }
 
-    public Arrangement(String name, String startDate, String startTime, String endDate, String endTime) {
+    public Arrangement(String name, String startDate, String startTime, String weekDay, String endDate, String endTime) {
         this.name = name;
         this.startDate = startDate;
         this.startTime = startTime;
+        this.weekDay = weekDay;
         this.endDate = endDate;
         this.endTime = endTime;
     }
@@ -50,6 +62,14 @@ public class Arrangement {
         this.startTime = startTime;
     }
 
+    public String getWeekDay() {
+        return weekDay;
+    }
+
+    public void setWeekDay(String weekDay) {
+        this.weekDay = weekDay;
+    
+    }
     public String getEndDate() {
         return endDate;
     }
@@ -69,5 +89,9 @@ public class Arrangement {
     public int getId() {
         return id;
     }
+        @Override
+    public String toString() {
+        return name;
+    }
+    
 }
-

@@ -47,4 +47,13 @@ public class Database {
         }
         return rs;
     }
+    
+    public void insertQuery(String query) {
+        System.out.println(query);
+        try {
+            stmt.execute(query);
+        } catch (SQLException ex) {
+            Logger.getLogger(Database.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 }

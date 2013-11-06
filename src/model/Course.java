@@ -1,6 +1,15 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 
 package model;
 
+/**
+ *
+ * @author Joseph
+ */
 public class Course {
     private int id;
     private String name;
@@ -10,7 +19,6 @@ public class Course {
     private int maxValue;
     private String endDate;
     private String endTime;
-    private int count;
 
     public Course(int id, String name, String startDate, String startTime, String weekDay, int maxValue, String endDate, String endTime) {
         this.id = id;
@@ -21,7 +29,6 @@ public class Course {
         this.maxValue = maxValue;
         this.endDate = endDate;
         this.endTime = endTime;
-        this.count = 0;
     }
 
     public Course(String name, String startDate, String startTime, String weekDay, int maxValue, String endDate, String endTime) {
@@ -97,11 +104,6 @@ public class Course {
     @Override
     public String toString() {
         return name;
-    }
-    
-    public int count(){
-        
-        return count+1;
     }
     
     
