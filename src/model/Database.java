@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package model;
 
 import java.sql.Connection;
@@ -19,41 +18,36 @@ import java.util.logging.Logger;
  * @author Joseph
  */
 public class Database {
-    private Statement stmt;
-    
-    public Database(String database) {
-        try {
-            // TOD try {
-                Class.forName("com.mysql.jdbc.Driver");
-                Connection conn;
-                String db = "mycontacts";
-                String url = "jdbc:mysql://localhost:3306/" + database;
-                conn = DriverManager.getConnection(url, "root", "yhdxyady");
-                stmt = conn.createStatement();
-        } catch (ClassNotFoundException ex) {
-            System.out.println("Driver");
-        } catch (SQLException ex) {
-            System.out.println("Forbindelse");
-        }
-    }    
 
-    public ResultSet selectQuery(String query) {
-        ResultSet rs = null;
-        try {
-            rs = stmt.executeQuery(query);
-            
-        } catch (SQLException ex) {
-            Logger.getLogger(Database.class.getName()).log(Level.SEVERE, null, ex);
+    private Statement stmt;
+    private String database;
+
+    public Database(String database) throws ClassNotFoundException, SQLException {
+        stmt = null;
+        this.database = database;
+        createStatement();
+    }
+
+    public void createStatement() throws ClassNotFoundException, SQLException {
+        if (stmt != null) {
+            stmt.close();
         }
+        Class.forName("com.mysql.jdbc.Driver");
+        Connection conn;
+        String db = "mycontacts";
+        String url = "jdbc:mysql://localhost:3306/" + database;
+        conn = DriverManager.getConnection(url, "root", "yhdxyady");
+        stmt = conn.createStatement();
+
+    }
+
+    public ResultSet selectQuery(String query) throws SQLException {
+        ResultSet rs = null;
+        rs = stmt.executeQuery(query);
         return rs;
     }
-    
-    public void insertQuery(String query) {
-        System.out.println(query);
-        try {
-            stmt.execute(query);
-        } catch (SQLException ex) {
-            Logger.getLogger(Database.class.getName()).log(Level.SEVERE, null, ex);
-        }
+
+    public void query(String query) throws SQLException {
+        stmt.execute(query);
     }
 }

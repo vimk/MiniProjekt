@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
+import javax.swing.JOptionPane;
 import model.Course;
 import model.Arrangement;
 import model.Database;
@@ -25,14 +26,38 @@ public class Main extends javax.swing.JFrame {
     private User user;
 
     public Main() {
-        db = new Database("ungdomsskolemini");
+
+        try {
+            db = new Database("ungdomsskolemini");
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null,
+                    "Der opstod en fejl med driveren til databasen",
+                    "Fejl",
+                    JOptionPane.ERROR_MESSAGE);
+        } catch (SQLException ex) {
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null,
+                    "Der opstod en fejl med connection til databasen",
+                    "Fejl",
+                    JOptionPane.ERROR_MESSAGE);
+        }
         initComponents();
-        aList1 = new ArrangementList(db, "Forår");
-        aList2 = new ArrangementList(db, "Efterår");
-        cList1 = new CourseList(db, "Forår");
-        cList2 = new CourseList(db, "Efterår");
-        showCourses(cList1);
-        showArrangements(aList1);
+
+        try {
+            aList1 = new ArrangementList(db, "Forår");
+            aList2 = new ArrangementList(db, "Efterår");
+            cList1 = new CourseList(db, "Forår");
+            cList2 = new CourseList(db, "Efterår");
+            showCourses(cList1);
+            showArrangements(aList1);
+        } catch (SQLException ex) {
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null,
+                    "Der opstod en fejl med oprettelse af lister til kurser og arrangementer",
+                    "Fejl",
+                    JOptionPane.ERROR_MESSAGE);
+        }
 
     }
 
@@ -118,7 +143,7 @@ public class Main extends javax.swing.JFrame {
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jBLogin)
                     .addComponent(jBSkip))
-                .addContainerGap(314, Short.MAX_VALUE))
+                .addContainerGap(317, Short.MAX_VALUE))
         );
 
         jPanel7.add(jPanel6, "card3");
@@ -179,8 +204,8 @@ public class Main extends javax.swing.JFrame {
                                 .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE))))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jLUser1, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(80, Short.MAX_VALUE))
+                        .addComponent(jLUser1, javax.swing.GroupLayout.PREFERRED_SIZE, 585, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(88, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -249,15 +274,15 @@ public class Main extends javax.swing.JFrame {
                         .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 396, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jLUser2, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(60, 60, 60)
+                        .addComponent(jLUser2, javax.swing.GroupLayout.PREFERRED_SIZE, 498, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(34, 34, 34)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                         .addComponent(jLabel3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(80, Short.MAX_VALUE))
+                .addContainerGap(88, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -277,7 +302,7 @@ public class Main extends javax.swing.JFrame {
                     .addComponent(jScrollPane3))
                 .addGap(18, 18, 18)
                 .addComponent(jBArrangementAdd)
-                .addContainerGap(176, Short.MAX_VALUE))
+                .addContainerGap(178, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Arrangementer", jPanel2);
@@ -302,16 +327,20 @@ public class Main extends javax.swing.JFrame {
                     user = new User(rs.getString("cprnr"), rs.getString("firstName"), rs.getString("lastName")); //Opretter en bruger i "User" klassen med data fra Database
                     CardLayout cl = (CardLayout) jPanel7.getLayout();
                     cl.next(jPanel7);//Gå videre til kursus/arrangemeter del af programmet
-                    jLUser1.setText("Logged ind som: " + user.getFirstName() + " " + user.getLastName());
-                    jLUser2.setText("Logged ind som: " + user.getFirstName() + " " + user.getLastName());
                     jTCPR.setText(null);
                     jLabel4.setText(null);
+                    showAmountBookingForSeason();
                     //Sætter og tømmer visse tekstfelter.
                 } else {
                     jLabel4.setText("CPR nr findes ikke");//Hvis CPR nr ikke findes skriver vi det til brugeren.
                 }
+                rs.close();
             } catch (SQLException ex) {
                 Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+                JOptionPane.showMessageDialog(null,
+                        "Der opstod en fejl med login",
+                        "Fejl",
+                        JOptionPane.ERROR_MESSAGE);
             }
         } else {
             jLabel4.setText("Ugyldigt CPR nr");//Skrevet et ugyldigt CPR nr.
@@ -336,9 +365,31 @@ public class Main extends javax.swing.JFrame {
         } else {
             //Add to course
             if (jList1.getSelectedValue() != null) {
-                Course course = (Course) jList1.getSelectedValue();
-                Booking booking = new Booking(user, course, db);
-                booking.insertBooking();
+                try {
+                    Course course = (Course) jList1.getSelectedValue();
+                    Booking booking = new Booking(user, course, db);
+                    String season = jComboBox1.getSelectedItem().toString();
+                    int result = booking.insertBooking(season);
+                    System.out.println(result + "");
+                    if (result == 0) {
+                        showAmountBookingForSeason();
+                        JOptionPane.showMessageDialog(null,
+                                "Du er nu tilmeldt kurset",
+                                "Success",
+                                JOptionPane.INFORMATION_MESSAGE);
+                    } else if (result == -1) {
+                        JOptionPane.showMessageDialog(null,
+                                "Du er allerede tilmeldt",
+                                "FEJL",
+                                JOptionPane.ERROR_MESSAGE);
+                    }
+                } catch (SQLException ex) {
+                    Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+                    JOptionPane.showMessageDialog(null,
+                            "Der opstod en fejl med tilmelding",
+                            "Fejl",
+                            JOptionPane.ERROR_MESSAGE);
+                }
             }
         }
     }//GEN-LAST:event_jBCourseAddActionPerformed
@@ -350,6 +401,7 @@ public class Main extends javax.swing.JFrame {
             } else {
                 showCourses(cList2);
             }
+            showAmountBookingForSeason();
         }
     }//GEN-LAST:event_jComboBox1ActionPerformed
 
@@ -369,9 +421,30 @@ public class Main extends javax.swing.JFrame {
         } else {
             //Add to Arrangement
             if (jList2.getSelectedValue() != null) {
-                Arrangement arrangement = (Arrangement) jList2.getSelectedValue();
-                Booking booking = new Booking(user, arrangement, db);
-                booking.insertBooking();
+                try {
+                    Arrangement arrangement = (Arrangement) jList2.getSelectedValue();
+                    Booking booking = new Booking(user, arrangement, db);
+                    String season = jComboBox2.getSelectedItem().toString();
+                    int result = booking.insertBooking(season);
+                    if (result == 0) {
+                        showAmountBookingForSeason();
+                        JOptionPane.showMessageDialog(null,
+                                "Du er nu tilmeldt Arrangement",
+                                "Success",
+                                JOptionPane.INFORMATION_MESSAGE);
+                    } else if (result == -1) {
+                        JOptionPane.showMessageDialog(null,
+                                "Du er allerede tilmeldt",
+                                "FEJL",
+                                JOptionPane.ERROR_MESSAGE);
+                    }
+                } catch (SQLException ex) {
+                    Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+                    JOptionPane.showMessageDialog(null,
+                            "Der opstod en fejl med tilmelding",
+                            "Fejl",
+                            JOptionPane.ERROR_MESSAGE);
+                }
             }
         }
     }//GEN-LAST:event_jBArrangementAddActionPerformed
@@ -383,6 +456,7 @@ public class Main extends javax.swing.JFrame {
             } else {
                 showArrangements(aList2);
             }
+            showAmountBookingForSeason();
         }
     }//GEN-LAST:event_jComboBox2ActionPerformed
 
@@ -397,20 +471,36 @@ public class Main extends javax.swing.JFrame {
 
     private void showCourses(CourseList cList) {
         ArrayList<Course> courses = cList.getCourseList();
-        DefaultListModel listModel = new DefaultListModel();
-        for (Course course : courses) {
-            listModel.addElement(course);
-        }
-        jList1.setModel(listModel);
+        jList1.setListData(courses.toArray());
+//        DefaultListModel listModel = new DefaultListModel();
+//        for (Course course : courses) {
+//            listModel.addElement(course);
+//        }
+//        jList1.setModel(listModel);
     }
 
     private void showArrangements(ArrangementList aList) {
         ArrayList<Arrangement> arrangements = aList.getArrangementList();
-        DefaultListModel listModel2 = new DefaultListModel();
-        for (Arrangement arrangement : arrangements) {
-            listModel2.addElement(arrangement);
+        jList2.setListData(arrangements.toArray());
+//        DefaultListModel listModel2 = new DefaultListModel();
+//        for (Arrangement arrangement : arrangements) {
+//            listModel2.addElement(arrangement);
+//        }
+//        jList2.setModel(listModel2);
+    }
+
+    private void showAmountBookingForSeason() {
+        String lUser = "Logged ind som: " + user.getFirstName() + " " + user.getLastName();
+        String season = jComboBox1.getSelectedItem().toString();
+        try {
+            int result = Booking.getAmountOfBooking(user, 1, db, season);
+            jLUser1.setText(lUser + " - Du er tilmeldt " + Integer.toString(result));
+            season = jComboBox2.getSelectedItem().toString();
+            result = Booking.getAmountOfBooking(user, 2, db, season);
+            jLUser2.setText(lUser + " - Du er tilmeldt " + Integer.toString(result));
+        } catch (SQLException ex) {
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }
-        jList2.setModel(listModel2);
     }
 
     /**
